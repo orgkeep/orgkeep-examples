@@ -1,0 +1,131 @@
+# ============================================================
+# Orgkeep demo: Keycloak, PostgreSQL, Orgkeep (API + dashboard) and Mailpit
+#
+#   cd ../../orgkeep-core && mvn install
+#   cd ../orgkeep-dashboard && mvn package -Pdocker
+#   cd ../orgkeep-examples/docker-compose && docker compose up -d
+#
+# - Keycloak on http://localhost:8280 (admin console: admin / admin)
+# - Orgkeep (dashboard, and the API under /api) on http://localhost:8284
+# - realm "demo": realm-owner / password, org-owner / password (owner of the org "acme"), paul / password...
+# - Mailpit on http://localhost:8025: the invitation emails
+# Same URLs and accounts as mvn quarkus:dev in orgkeep-dashboard. The requests of
+# orgkeep-core/src/test/http/demo.http target the core alone (8282): replace the port with 8284.
+#
+# A demo, not a production setup: fixed passwords, plain HTTP, Keycloak exposed directly.
+# ============================================================
+name: orgkeep-demo
+
+services:
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6.1
+    restart: unless-stopped
+    command: start
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+
+      # The tokens are requested from the host: their issuer is http://localhost:8280/realms/demo.
+      # Orgkeep reaches Keycloak through http://keycloak:8080. With BACKCHANNEL_DYNAMIC, the discovery seen by
+      # Orgkeep keeps this public issuer but gives internal URLs (jwks...) the container can reach.
+      KC_HOSTNAME: http://localhost:8280
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HTTP_ENABLED: "true"
+
+      # Admin bootstrap (first startup only)
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      # Orgkeep login theme, mounted from the sources of orgkeep-theme (a theme folder needs no kc.sh build,
+      # unlike a jar in providers/). Set on the dashboard client by ORGKEEP_DASHBOARD_LOGIN_THEME: the login of
+      # the users of the orgs keeps the Keycloak page.
+      - ../../orgkeep-theme/src/main/resources/theme/orgkeep:/opt/keycloak/themes/orgkeep:ro
+    ports:
+      - "8280:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      # Since Keycloak 25, /health is served on the management port 9000, not on 8080
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  # The API of the core and the dashboard, a single app (image built by orgkeep-dashboard).
+  # API alone, without the dashboard: image orgkeep/orgkeep-core (cd orgkeep-core && mvn package -Pdocker),
+  # port 8282, without ORGKEEP_DASHBOARD_CLIENT_SECRET
+  orgkeep:
+    image: orgkeep/orgkeep:1.0.0-SNAPSHOT
+    restart: unless-stopped
+    environment:
+      # Admin API and OIDC go through the internal network
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # Keycloak as seen by the browser, not by the container: issuer shown to the realm owner, Swagger UI login
+      ORGKEEP_KEYCLOAK_PUBLIC_URL: http://localhost:8280
+
+      # Realm managed by Orgkeep and its initial owner (created at the first startup)
+      ORGKEEP_REALM_NAME: demo
+      ORGKEEP_OWNER_EMAIL: realm-owner@demo.test
+      ORGKEEP_OWNER_USERNAME: realm-owner
+      ORGKEEP_OWNER_PASSWORD: password
+      ORGKEEP_OWNER_TEMPORARY_PASSWORD: "false"
+      ORGKEEP_OWNER_FIRST_NAME: Alice
+      ORGKEEP_OWNER_LAST_NAME: Martin
+      # Creates the demo orgs, their members and catalogs (DemoSeeder)
+      ORGKEEP_DEMO_ENABLED: "true"
+
+      # The orgkeep-dashboard client is created by the DemoSeeder with this secret (redirect http://localhost:8284/*)
+      ORGKEEP_DASHBOARD_CLIENT_SECRET: dashboard-dev-secret
+      # Login page of the dashboard in the Orgkeep look (theme mounted in keycloak above)
+      ORGKEEP_DASHBOARD_LOGIN_THEME: orgkeep
+
+      # Swagger UI on http://localhost:8284/q/swagger-ui, with a username / password login
+      QUARKUS_SWAGGER_UI_ENABLE: "true"
+      ORGKEEP_SWAGGER_UI_LOGIN: "true"
+
+      # Invitation emails: Keycloak sends them to Mailpit, readable on http://localhost:8025
+      ORGKEEP_SMTP_HOST: mailpit
+      ORGKEEP_SMTP_PORT: "1025"
+      ORGKEEP_SMTP_FROM: no-reply@demo.test
+      ORGKEEP_SMTP_STARTTLS: "false"
+      ORGKEEP_SMTP_SSL: "false"
+    ports:
+      - "8284:8284"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+
+  # Catches every email of the realm (same image as compose-devservices.yml of the core)
+  mailpit:
+    image: axllent/mailpit:v1.31.3
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+
+volumes:
+  postgres_data:

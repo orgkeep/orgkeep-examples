@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Builds every demo API at once (mvn package here). An aggregator only, not a parent: each demo is a complete
+      project of its own, with its own parent (Spring Boot) or none (Vert.x), and builds alone from its folder.
+      docker-compose/ is not a Maven module.
+    -->
+    <groupId>io.orgkeep.demo</groupId>
+    <artifactId>orgkeep-examples</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>orgkeep-examples</name>
+    <description>Examples of Orgkeep: a demo compose, and APIs of a realm owner protected by Orgkeep</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>greetings-api-spring</module>
+        <module>greetings-api-vertx</module>
+    </modules>
+</project>

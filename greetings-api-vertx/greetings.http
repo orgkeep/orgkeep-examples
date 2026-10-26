@@ -1,0 +1,27 @@
+### Requests for the greetings API in Vert.x (IntelliJ HTTP client). The demo of Orgkeep must run: Keycloak on 8280, realm demo.
+
+### 1. A token of Paul, for the catalogs prod and sandbox, as an application of the realm owner gets it.
+# The login client of the demo realm is "demo" (the realm name); the password grant is on for the demo only.
+# Full or lightweight, depending on the "Lightweight tokens" switch of the login client (dashboard, Login client page).
+POST http://localhost:8280/realms/demo/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=demo&username=paul&password=password&scope=openid prod sandbox
+
+> {% client.global.set("token", response.body.access_token); %}
+
+### 2. The greetings API: how the token was verified, the size of the Authorization header, the rights and quotas read.
+GET http://localhost:8291/greetings
+Authorization: Bearer {{token}}
+
+### 3. A token without the catalog prod: refused offline (prod not in its audience), 401.
+POST http://localhost:8280/realms/demo/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=demo&username=paul&password=password&scope=openid
+
+> {% client.global.set("tokenWithoutProd", response.body.access_token); %}
+
+###
+GET http://localhost:8291/greetings
+Authorization: Bearer {{tokenWithoutProd}}
