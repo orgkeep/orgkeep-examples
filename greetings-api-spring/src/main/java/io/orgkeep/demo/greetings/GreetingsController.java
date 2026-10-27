@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The greetings API: says hello, and what the token gives in the catalog of the API. The same code in both modes:
@@ -30,10 +31,11 @@ public class GreetingsController {
      * @param authorizationHeaderBytes the size of the Authorization header of the request: what the token costs on
      *                                 every call, against the limits of the proxies and servers (often 8 KB a header)
      * @param rights                   the roles of the catalog: products, features (product:feature), catalog roles
-     * @param quotasAndParams          the claim of the catalog: the quotas and parameters of each product
+     * @param quotasAndParams          the claims of the catalog: the quotas and parameters of each product
+     *                                 ("prod.billing") and the quotas of each metered feature ("prod.billing.scan")
      */
     record Greeting(String greeting, String verification, int authorizationHeaderBytes, List<String> rights,
-                    Object quotasAndParams) { }
+                    Map<String, Object> quotasAndParams) { }
 
     @GetMapping("/greetings")
     Greeting greet(Authentication authentication, HttpServletRequest request) {
@@ -43,7 +45,7 @@ public class GreetingsController {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         return new Greeting("Hello " + claims.get("preferred_username"), verification,
-                header == null ? 0 : header.length(), catalogRoles(claims), claims.get(catalog));
+                header == null ? 0 : header.length(), catalogRoles(claims), catalogClaims(claims));
     }
 
     /** resource_access.&lt;catalog&gt;.roles: nested JSON objects come as maps, either way. */
@@ -54,5 +56,16 @@ public class GreetingsController {
             return roles.stream().map(String::valueOf).sorted().toList();
         }
         return List.of();
+    }
+
+    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.scan"... sorted by name. */
+    private Map<String, Object> catalogClaims(Map<String, Object> claims) {
+        Map<String, Object> catalogClaims = new TreeMap<>();
+        claims.forEach((name, value) -> {
+            if (name.startsWith(catalog + ".")) {
+                catalogClaims.put(name, value);
+            }
+        });
+        return catalogClaims;
     }
 }

@@ -14,7 +14,7 @@ a full token, from a client that is not in lightweight mode, still costs no call
 
 `GET /greetings` says hello and returns what the API read: how the token was verified, the size of the
 `Authorization` header, the rights of the user in the catalog of the API (`resource_access.prod.roles`) and the quotas
-and parameters of its products (claim `prod`).
+and parameters of its products (the claims named after the catalog: `prod.billing`, `prod.billing.scan`...).
 
 ## What a lightweight token changes
 

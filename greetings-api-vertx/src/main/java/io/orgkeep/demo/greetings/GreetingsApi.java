@@ -48,7 +48,7 @@ public class GreetingsApi {
 
     /**
      * Answers how the token was verified, the size of the Authorization header (what the token costs on every call,
-     * against the limits of the proxies and servers, often 8 KB a header), the roles of the catalog and its claim.
+     * against the limits of the proxies and servers, often 8 KB a header), the roles of the catalog and its claims.
      */
     private static void greet(RoutingContext ctx, TokenVerifier verifier, String catalog) {
         String header = ctx.request().getHeader("Authorization");
@@ -64,7 +64,7 @@ public class GreetingsApi {
                             .put("verification", verified.verification())
                             .put("authorizationHeaderBytes", header.length())
                             .put("rights", catalogRoles(claims, catalog))
-                            .put("quotasAndParams", claims.getJsonObject(catalog)));
+                            .put("quotasAndParams", catalogClaims(claims, catalog)));
                 })
                 .onFailure(e -> {
                     log.log(System.Logger.Level.INFO, "Token refused: {0}", e.getMessage());
@@ -80,6 +80,16 @@ public class GreetingsApi {
                 .map(access -> access.getJsonArray("roles"))
                 .orElse(new JsonArray());
         return new JsonArray(roles.stream().map(String::valueOf).sorted().toList());
+    }
+
+    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.scan"... sorted by name. */
+    private static JsonObject catalogClaims(JsonObject claims, String catalog) {
+        JsonObject catalogClaims = new JsonObject();
+        claims.fieldNames().stream()
+                .filter(name -> name.startsWith(catalog + "."))
+                .sorted()
+                .forEach(name -> catalogClaims.put(name, claims.getValue(name)));
+        return catalogClaims;
     }
 
     private static String env(String name, String defaultValue) {
