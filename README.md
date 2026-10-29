@@ -34,3 +34,10 @@ mvn package
 ```
 
 They run against the demo stack above (Keycloak on 8280, realm `demo`).
+
+## Demo API gateway
+
+[`gateway-go`](gateway-go) (Go, port 8292): in front of the APIs, it introspects the lightweight tokens of the
+clients once each, and passes full tokens to the APIs behind it (the *phantom token* pattern). For many autoscaled
+API instances: Keycloak only sees one introspection per token. A Go module, not a Maven module: `go run .` and
+`go test ./...` in its folder.
