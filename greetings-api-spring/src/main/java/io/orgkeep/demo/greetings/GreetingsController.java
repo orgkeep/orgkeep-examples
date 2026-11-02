@@ -32,7 +32,7 @@ public class GreetingsController {
      *                                 every call, against the limits of the proxies and servers (often 8 KB a header)
      * @param rights                   the roles of the catalog: products, features (product:feature), catalog roles
      * @param quotasAndParams          the claims of the catalog: the quotas and parameters of each product
-     *                                 ("prod.billing") and the quotas of each metered feature ("prod.billing.scan")
+     *                                 ("prod.billing") and the quotas of each metered feature ("prod.billing.search")
      */
     record Greeting(String greeting, String verification, int authorizationHeaderBytes, List<String> rights,
                     Map<String, Object> quotasAndParams) { }
@@ -58,7 +58,7 @@ public class GreetingsController {
         return List.of();
     }
 
-    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.scan"... sorted by name. */
+    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.search"... sorted by name. */
     private Map<String, Object> catalogClaims(Map<String, Object> claims) {
         Map<String, Object> catalogClaims = new TreeMap<>();
         claims.forEach((name, value) -> {

@@ -11,7 +11,7 @@ Orgkeep can give, and chooses token by token.
 
 `GET /greetings` says hello and returns what the API read: how the token was verified, the size of the
 `Authorization` header, the rights of the user in the catalog of the API (`resource_access.prod.roles`) and the quotas
-and parameters of its products (the claims named after the catalog: `prod.billing`, `prod.billing.scan`...).
+and parameters of its products (the claims named after the catalog: `prod.billing`, `prod.billing.search`...).
 
 Measured on the demo, for Paul with `scope=openid prod sandbox`, both tokens sent to the same running API:
 

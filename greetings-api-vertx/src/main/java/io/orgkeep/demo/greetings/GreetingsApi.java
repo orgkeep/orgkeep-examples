@@ -82,7 +82,7 @@ public class GreetingsApi {
         return new JsonArray(roles.stream().map(String::valueOf).sorted().toList());
     }
 
-    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.scan"... sorted by name. */
+    /** The flat claims of the catalog, named after it: "prod.billing", "prod.billing.search"... sorted by name. */
     private static JsonObject catalogClaims(JsonObject claims, String catalog) {
         JsonObject catalogClaims = new JsonObject();
         claims.fieldNames().stream()
