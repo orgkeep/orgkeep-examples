@@ -1,0 +1,20 @@
+### Requests for the demo gateway (IntelliJ HTTP client). The demo of Orgkeep must run (Keycloak on 8280, realm demo),
+### with greetings-api-spring on 8290 and the gateway on 8292.
+
+### 1. A token of Paul, for the catalogs prod and sandbox. Lightweight once the "Lightweight tokens" switch of the login
+# client is on (dashboard, Login client page).
+POST http://localhost:8280/realms/demo/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id=demo&username=paul&password=password&scope=openid prod sandbox
+
+> {% client.global.set("token", response.body.access_token); %}
+
+### 2. Through the gateway: X-Gateway-Token says introspection, then cache. The API answers how the token it received
+# was verified ("jwt (offline)": the full token) and the size of its Authorization header.
+GET http://localhost:8292/greetings
+Authorization: Bearer {{token}}
+
+### 3. The same lightweight token, directly to the API, which has no introspection credentials: 401.
+GET http://localhost:8290/greetings
+Authorization: Bearer {{token}}

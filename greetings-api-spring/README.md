@@ -52,10 +52,16 @@ tokens.
    CATALOG_CLIENT_SECRET=<the secret> mvn spring-boot:run
    ```
 
-   Without the secret, the API starts and accepts only full tokens (a warning says so).
+   Without the secret, the API starts and accepts only full tokens (a warning says so). The API listens on port
+   8290 (`SERVER_PORT`). The other environment variables have the demo as defaults: `KEYCLOAK_ISSUER`
+   (`http://localhost:8280/realms/demo`, the issuer of the tokens), `KEYCLOAK_URL` (the realm as the API reaches it,
+   for its keys and the introspection: the issuer by default, an internal URL in Docker), `CATALOG` (`prod`).
 3. Requests 1 and 2 of [`greetings.http`](greetings.http): a full token, `"verification": "jwt (offline)"`.
 4. In the dashboard, **Login client** page, turn on **Lightweight tokens**. Requests 1 and 2 again, with a new token:
    `"verification": "introspection"`, the same rights, a smaller header.
+
+In the demo compose, the API already runs on 8290, with the secret the demo sets on the catalog `prod`
+(`prod-demo-secret`): skip steps 1 and 2. To build its image alone: `docker build -t ghcr.io/orgkeep/greetings-api-spring .`
 
 ## How it chooses
 

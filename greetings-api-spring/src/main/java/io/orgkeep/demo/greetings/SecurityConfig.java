@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManagerResolver
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.OpaqueTokenAuthenticationProvider;
@@ -54,11 +55,15 @@ public class SecurityConfig {
     @Bean
     AuthenticationManagerResolver<HttpServletRequest> tokenResolver(
             @Value("${keycloak.issuer}") String issuer,
+            @Value("${keycloak.url}") String realmUrl,
             @Value("${demo.catalog}") String catalog,
             @Value("${demo.catalog-secret}") String catalogSecret) {
-        // full tokens: the keys of Keycloak (JWKS) read once, then the signature, issuer and expiry checked offline
-        AuthenticationManager offline = new ProviderManager(
-                new JwtAuthenticationProvider(NimbusJwtDecoder.withIssuerLocation(issuer).build()));
+        // full tokens: the keys of Keycloak (JWKS) read once, then the signature, issuer and expiry checked offline.
+        // Not withIssuerLocation(realmUrl): it requires the issuer to be the URL the API reaches Keycloak with, false in
+        // Docker (tokens issued for localhost:8280, Keycloak reached as keycloak:8080)
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(realmUrl + "/protocol/openid-connect/certs").build();
+        decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer));
+        AuthenticationManager offline = new ProviderManager(new JwtAuthenticationProvider(decoder));
         // lightweight tokens: introspection with the credentials of the catalog, cached until the token expires
         // (Spring Security does not cache it)
         if (catalogSecret.isBlank()) {
@@ -66,7 +71,7 @@ public class SecurityConfig {
         }
         AuthenticationManager introspection = new ProviderManager(new OpaqueTokenAuthenticationProvider(
                 new CachingIntrospector(SpringOpaqueTokenIntrospector
-                        .withIntrospectionUri(issuer + "/protocol/openid-connect/token/introspect")
+                        .withIntrospectionUri(realmUrl + "/protocol/openid-connect/token/introspect")
                         .clientId(catalog)
                         .clientSecret(catalogSecret)
                         .build())));
