@@ -31,10 +31,12 @@ type Verifier struct {
 	lastRefresh time.Time
 }
 
-func NewVerifier(issuer string, client *http.Client) *Verifier {
+// NewVerifier takes the issuer of the tokens (Keycloak as the browsers see it) and the realm as the gateway reaches it,
+// for the keys: the same URL, except in Docker, where localhost is the container itself.
+func NewVerifier(issuer, realmURL string, client *http.Client) *Verifier {
 	return &Verifier{
 		issuer:  issuer,
-		jwksURL: issuer + "/protocol/openid-connect/certs",
+		jwksURL: realmURL + "/protocol/openid-connect/certs",
 		client:  client,
 		keys:    map[string]*rsa.PublicKey{},
 	}

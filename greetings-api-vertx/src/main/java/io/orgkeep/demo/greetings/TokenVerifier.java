@@ -44,17 +44,20 @@ public class TokenVerifier {
     }
 
     /**
-     * @param issuer        the realm of Keycloak
+     * @param issuer        the realm of Keycloak as the browsers see it, the issuer of the tokens
+     * @param realmUrl      the same realm as this API reaches it, for the keys and the introspection (in Docker, an
+     *                      internal URL: localhost is the container itself)
      * @param catalog       the catalog of the API: its client must be in the audience of the token (both ways)
      * @param catalogSecret the secret of the catalog client, to introspect
      */
-    public static Future<TokenVerifier> create(Vertx vertx, String issuer, String catalog, String catalogSecret) {
+    public static Future<TokenVerifier> create(Vertx vertx, String issuer, String realmUrl, String catalog,
+                                               String catalogSecret) {
         // full tokens: the keys of Keycloak (JWKS) loaded once, then the JWT validated offline: signature, issuer,
         // expiry, and the audience must contain the clientId, the catalog. Not through the OpenID discovery
         // (OpenIDConnectAuth.discover): it would also set the introspection endpoint, and a JWT refused offline (a token
         // without the catalog in its audience) would then be introspected, without credentials, for nothing
         OAuth2Auth offlineProvider = OAuth2Auth.create(vertx, new OAuth2Options()
-                .setSite(issuer)
+                .setSite(realmUrl)
                 .setJwkPath("/protocol/openid-connect/certs")
                 .setClientId(catalog)
                 .setJWTOptions(new JWTOptions().setIssuer(issuer)));
@@ -62,7 +65,7 @@ public class TokenVerifier {
         // lightweight tokens: no key, so every token is taken as opaque and introspected with the credentials of the
         // catalog (HTTP Basic). Keycloak only lets the catalog client introspect the tokens of its catalog
         OAuth2Auth introspection = OAuth2Auth.create(vertx, new OAuth2Options()
-                .setSite(issuer)
+                .setSite(realmUrl)
                 .setIntrospectionPath("/protocol/openid-connect/token/introspect")
                 .setClientId(catalog)
                 .setClientSecret(catalogSecret));

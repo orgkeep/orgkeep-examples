@@ -40,9 +40,10 @@ type cached struct {
 // ErrInactive is a token Keycloak no longer accepts (logout, user disabled, not of a catalog of the gateway).
 var ErrInactive = errors.New("inactive token")
 
-func NewIntrospector(issuer string, secrets map[string]string, client *http.Client) *Introspector {
+// NewIntrospector takes the realm as the gateway reaches it (see NewVerifier).
+func NewIntrospector(realmURL string, secrets map[string]string, client *http.Client) *Introspector {
 	return &Introspector{
-		url:     issuer + "/protocol/openid-connect/token/introspect",
+		url:     realmURL + "/protocol/openid-connect/token/introspect",
 		secrets: secrets,
 		client:  client,
 		cache:   map[string]cached{},

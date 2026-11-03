@@ -59,9 +59,15 @@ secret: behind the gateway, it only receives full tokens.
    CATALOG_SECRETS=prod=<the secret> go run .
    ```
 
-   Other environment variables, with the demo as defaults: `KEYCLOAK_ISSUER` (`http://localhost:8280/realms/demo`),
-   `UPSTREAM` (`http://localhost:8290`), `PORT` (`8292`). Several catalogs: `CATALOG_SECRETS=prod=...,sandbox=...`.
+   Other environment variables, with the demo as defaults: `KEYCLOAK_ISSUER` (`http://localhost:8280/realms/demo`,
+   the issuer of the tokens), `KEYCLOAK_URL` (the realm as the gateway reaches it, for its keys and the
+   introspection: the issuer by default, an internal URL in Docker), `UPSTREAM` (`http://localhost:8290`), `PORT`
+   (`8292`). Several catalogs: `CATALOG_SECRETS=prod=...,sandbox=...`.
 3. The requests of [`gateway.http`](gateway.http).
+
+In the demo compose, the gateway already runs on 8292 in front of `greetings-api-spring`, with the secrets the demo
+sets on the catalogs (`prod-demo-secret`, `sandbox-demo-secret`): only turn on **Lightweight tokens** (step 1). To
+build its image alone: `docker build -t ghcr.io/orgkeep/gateway-go .`
 
 Measured on the demo, for Paul with `scope=openid prod sandbox`:
 

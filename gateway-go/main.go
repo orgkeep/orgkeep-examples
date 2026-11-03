@@ -7,7 +7,8 @@
 // instances autoscale behind it, Keycloak only sees one introspection per token.
 //
 // Configured by environment variables, with the demo of Orgkeep as defaults:
-// KEYCLOAK_ISSUER (http://localhost:8280/realms/demo), UPSTREAM (http://localhost:8290, greetings-api-spring),
+// KEYCLOAK_ISSUER (http://localhost:8280/realms/demo), KEYCLOAK_URL (the realm as the gateway reaches it, the issuer by
+// default; http://keycloak:8080/realms/demo in the demo compose), UPSTREAM (http://localhost:8290, greetings-api-spring),
 // CATALOG_SECRETS (catalog=secret,... the secrets generated in the dashboard, page of each catalog), PORT (8292).
 package main
 
@@ -26,6 +27,7 @@ const markerClaim = "lightweight"
 
 func main() {
 	issuer := env("KEYCLOAK_ISSUER", "http://localhost:8280/realms/demo")
+	realmURL := env("KEYCLOAK_URL", issuer)
 	upstream, err := url.Parse(env("UPSTREAM", "http://localhost:8290"))
 	if err != nil {
 		log.Fatalf("UPSTREAM: %v", err)
@@ -38,11 +40,11 @@ func main() {
 
 	// a timeout on every call to Keycloak: a slow Keycloak must not pile up the requests of the gateway
 	keycloak := &http.Client{Timeout: 5 * time.Second}
-	verifier := NewVerifier(issuer, keycloak)
+	verifier := NewVerifier(issuer, realmURL, keycloak)
 	if err := verifier.Refresh(); err != nil {
 		log.Fatalf("keys of the realm: %v", err)
 	}
-	introspector := NewIntrospector(issuer, secrets, keycloak)
+	introspector := NewIntrospector(realmURL, secrets, keycloak)
 	proxy := httputil.NewSingleHostReverseProxy(upstream)
 
 	http.Handle("/", handler(verifier, introspector, proxy))

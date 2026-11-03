@@ -81,7 +81,7 @@ func (f *fakeKeycloak) lightweightClaims() map[string]any {
 
 // gateway runs the handler in front of an upstream that echoes the Authorization header it received.
 func gateway(t *testing.T, fake *fakeKeycloak) *httptest.Server {
-	verifier := NewVerifier(fake.issuer(), http.DefaultClient)
+	verifier := NewVerifier(fake.issuer(), fake.issuer(), http.DefaultClient)
 	if err := verifier.Refresh(); err != nil {
 		t.Fatal(err)
 	}

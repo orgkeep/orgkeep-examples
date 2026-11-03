@@ -13,14 +13,16 @@ import java.util.Optional;
  * Full and lightweight tokens are accepted, chosen token by token (see TokenVerifier).
  * <p>
  * Configured by environment variables, with the demo of Orgkeep as defaults:
- * KEYCLOAK_ISSUER (http://localhost:8280/realms/demo), CATALOG (prod), CATALOG_CLIENT_SECRET (no default: generated in
- * the dashboard, page of the catalog), PORT (8291).
+ * KEYCLOAK_ISSUER (http://localhost:8280/realms/demo), KEYCLOAK_URL (the realm as this API reaches it, the issuer by
+ * default; http://keycloak:8080/realms/demo in the demo compose), CATALOG (prod), CATALOG_CLIENT_SECRET (no default:
+ * generated in the dashboard, page of the catalog), PORT (8291).
  */
 public class GreetingsApi {
     private static final System.Logger log = System.getLogger(GreetingsApi.class.getName());
 
     public static void main(String[] args) {
         String issuer = env("KEYCLOAK_ISSUER", "http://localhost:8280/realms/demo");
+        String realmUrl = env("KEYCLOAK_URL", issuer);
         String catalog = env("CATALOG", "prod");
         String catalogSecret = env("CATALOG_CLIENT_SECRET", "");
         int port = Integer.parseInt(env("PORT", "8291"));
@@ -30,7 +32,7 @@ public class GreetingsApi {
         }
 
         Vertx vertx = Vertx.vertx();
-        TokenVerifier.create(vertx, issuer, catalog, catalogSecret)
+        TokenVerifier.create(vertx, issuer, realmUrl, catalog, catalogSecret)
                 .compose(verifier -> {
                     Router router = Router.router(vertx);
                     router.get("/greetings").handler(ctx -> greet(ctx, verifier, catalog));
