@@ -13,7 +13,7 @@
 
     <groupId>org.orgkeep.demo</groupId>
     <artifactId>greetings-api-spring</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>greetings-api-spring</name>
     <description>An API of a realm owner protected by Orgkeep: full tokens (JWT) or lightweight tokens (introspection)</description>
 

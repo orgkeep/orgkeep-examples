@@ -33,7 +33,7 @@ Images:
 The Orgkeep version is `ORGKEEP_VERSION` (defaults to the one of this repository):
 
 ```
-ORGKEEP_VERSION=1.0.0 docker compose up -d --build
+ORGKEEP_VERSION=0.1.0 docker compose up -d --build
 ```
 
 ## Accounts
@@ -130,7 +130,7 @@ same names as the published ones, and the compose then uses them:
 ```
 cd orgkeep-core && mvn install            # the dashboard depends on the core
 cd ../orgkeep-dashboard && mvn package -Pdocker
-cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:1.0.0-SNAPSHOT .
+cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:0.1.0-SNAPSHOT .
 ```
 
 (`mvn package -Pdocker` in `orgkeep-core` builds the image of the API alone, `ghcr.io/orgkeep/orgkeep-core`.)

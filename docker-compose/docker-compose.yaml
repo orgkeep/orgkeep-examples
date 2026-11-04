@@ -33,7 +33,7 @@ services:
 
   # Keycloak in production mode (start, not start-dev), with the orgkeep theme added (image built by orgkeep-theme)
   keycloak:
-    image: ghcr.io/orgkeep/orgkeep-keycloak:${ORGKEEP_VERSION:-1.0.0-SNAPSHOT}
+    image: ghcr.io/orgkeep/orgkeep-keycloak:${ORGKEEP_VERSION:-0.1.0-SNAPSHOT}
     restart: unless-stopped
     command: start
     environment:
@@ -72,7 +72,7 @@ services:
   # API alone, without the dashboard: image ghcr.io/orgkeep/orgkeep-core, port 8282, without
   # ORGKEEP_DASHBOARD_CLIENT_SECRET (see README.md)
   orgkeep:
-    image: ghcr.io/orgkeep/orgkeep:${ORGKEEP_VERSION:-1.0.0-SNAPSHOT}
+    image: ghcr.io/orgkeep/orgkeep:${ORGKEEP_VERSION:-0.1.0-SNAPSHOT}
     restart: unless-stopped
     environment:
       # Admin API and OIDC go through the internal network
@@ -133,7 +133,7 @@ services:
 
   greetings-api-spring:
     build: ../greetings-api-spring
-    image: ghcr.io/orgkeep/greetings-api-spring:${ORGKEEP_VERSION:-1.0.0-SNAPSHOT}
+    image: ghcr.io/orgkeep/greetings-api-spring:${ORGKEEP_VERSION:-0.1.0-SNAPSHOT}
     restart: unless-stopped
     environment:
       KEYCLOAK_ISSUER: http://localhost:8280/realms/demo
@@ -147,7 +147,7 @@ services:
 
   greetings-api-vertx:
     build: ../greetings-api-vertx
-    image: ghcr.io/orgkeep/greetings-api-vertx:${ORGKEEP_VERSION:-1.0.0-SNAPSHOT}
+    image: ghcr.io/orgkeep/greetings-api-vertx:${ORGKEEP_VERSION:-0.1.0-SNAPSHOT}
     restart: unless-stopped
     environment:
       KEYCLOAK_ISSUER: http://localhost:8280/realms/demo
@@ -162,7 +162,7 @@ services:
   # In front of greetings-api-spring: swaps the lightweight tokens for full ones (phantom token)
   gateway-go:
     build: ../gateway-go
-    image: ghcr.io/orgkeep/gateway-go:${ORGKEEP_VERSION:-1.0.0-SNAPSHOT}
+    image: ghcr.io/orgkeep/gateway-go:${ORGKEEP_VERSION:-0.1.0-SNAPSHOT}
     restart: unless-stopped
     environment:
       KEYCLOAK_ISSUER: http://localhost:8280/realms/demo

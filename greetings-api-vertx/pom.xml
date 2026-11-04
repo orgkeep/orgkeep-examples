@@ -6,7 +6,7 @@
 
     <groupId>org.orgkeep.demo</groupId>
     <artifactId>greetings-api-vertx</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>greetings-api-vertx</name>
     <description>An API of a realm owner protected by Orgkeep, in Vert.x: full tokens (JWT) or lightweight tokens (introspection)</description>
 

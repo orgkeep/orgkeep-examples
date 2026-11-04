@@ -11,7 +11,7 @@
     -->
     <groupId>org.orgkeep.demo</groupId>
     <artifactId>orgkeep-examples</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>orgkeep-examples</name>
     <description>Examples of Orgkeep: a demo compose, and APIs of a realm owner protected by Orgkeep</description>
