@@ -1,4 +1,4 @@
-package io.orgkeep.demo.greetings;
+package org.orgkeep.demo.greetings;
 
 import com.nimbusds.jwt.JWTParser;
 import jakarta.servlet.http.HttpServletRequest;

@@ -27,7 +27,7 @@ Vert.x needs more care than Spring here, which is the point of this example.
 - **With the keys of Keycloak loaded, a provider never introspects a JWT.** `OAuth2Auth.authenticate` validates a JWT
   offline as soon as it has keys, and only introspects what it cannot decode. A lightweight token is a signed JWT:
   it passes, with nothing in it (no user, no rights, an HTTP 200). Hence **two providers**
-  ([`TokenVerifier`](src/main/java/io/orgkeep/demo/greetings/TokenVerifier.java)): one with the keys for the full
+  ([`TokenVerifier`](src/main/java/org/orgkeep/demo/greetings/TokenVerifier.java)): one with the keys for the full
   tokens, one without any key for the lightweight ones, which takes every token as opaque and introspects it.
 - **The OpenID discovery sets the introspection endpoint too.** A provider created by `OpenIDConnectAuth.discover`
   introspects a JWT it refused offline (a token without the catalog in its audience): a useless call to Keycloak,
@@ -73,8 +73,8 @@ In the demo compose, the API already runs on 8291, with the secret the demo sets
 
 ## Code
 
-- [`TokenVerifier`](src/main/java/io/orgkeep/demo/greetings/TokenVerifier.java): the choice by the marker, the two
+- [`TokenVerifier`](src/main/java/org/orgkeep/demo/greetings/TokenVerifier.java): the choice by the marker, the two
   providers, the cache.
-- [`GreetingsApi`](src/main/java/io/orgkeep/demo/greetings/GreetingsApi.java): the main class, the router and
+- [`GreetingsApi`](src/main/java/org/orgkeep/demo/greetings/GreetingsApi.java): the main class, the router and
   `GET /greetings`. The claims come from the attributes of the user (`accessToken`) offline, from its principal (the
   answer of the introspection) otherwise.

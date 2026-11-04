@@ -18,4 +18,4 @@ COPY --from=build /build/target/dependency lib
 EXPOSE 8291
 # not root
 USER 1000
-ENTRYPOINT ["java", "-cp", "classes:lib/*", "io.orgkeep.demo.greetings.GreetingsApi"]
+ENTRYPOINT ["java", "-cp", "classes:lib/*", "org.orgkeep.demo.greetings.GreetingsApi"]

@@ -65,7 +65,7 @@ In the demo compose, the API already runs on 8290, with the secret the demo sets
 
 ## How it chooses
 
-[`SecurityConfig`](src/main/java/io/orgkeep/demo/greetings/SecurityConfig.java) gives Spring Security an
+[`SecurityConfig`](src/main/java/org/orgkeep/demo/greetings/SecurityConfig.java) gives Spring Security an
 `AuthenticationManagerResolver`: for each request, it reads the claim `lightweight` of the bearer token and picks the
 JWT decoder or the introspection.
 
@@ -80,7 +80,7 @@ which answers `"active": false` (checked: an unsigned token carrying the marker 
   least refuse the tokens marked `"lightweight": true` (the API of Orgkeep answers them a `401`), or introspect them
   as here.
 - **Spring Security does not cache the introspection.** Without a cache, each request is a call to Keycloak.
-  [`CachingIntrospector`](src/main/java/io/orgkeep/demo/greetings/CachingIntrospector.java) keeps each answer until
+  [`CachingIntrospector`](src/main/java/org/orgkeep/demo/greetings/CachingIntrospector.java) keeps each answer until
   the token expires (in memory, for the demo; Caffeine with a maximum size in a real API). A token revoked in Keycloak
   stays valid in the cache until it expires.
 - **A token without the catalog of the API** (not asked for, or a user with no right in it) is answered
@@ -90,8 +90,8 @@ which answers `"active": false` (checked: an unsigned token carrying the marker 
 
 ## Code
 
-- [`SecurityConfig`](src/main/java/io/orgkeep/demo/greetings/SecurityConfig.java): the choice by the marker, the JWT
+- [`SecurityConfig`](src/main/java/org/orgkeep/demo/greetings/SecurityConfig.java): the choice by the marker, the JWT
   decoder, the cached introspection.
-- [`GreetingsController`](src/main/java/io/orgkeep/demo/greetings/GreetingsController.java): reads the claims the same
+- [`GreetingsController`](src/main/java/org/orgkeep/demo/greetings/GreetingsController.java): reads the claims the same
   way for both kinds (`AbstractOAuth2TokenAuthenticationToken.getTokenAttributes()`).
 - `application.properties`: the issuer, the catalog, and its secret (`CATALOG_CLIENT_SECRET`).

@@ -1,4 +1,4 @@
-package io.orgkeep.demo.greetings;
+package org.orgkeep.demo.greetings;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;

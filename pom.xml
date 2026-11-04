@@ -9,7 +9,7 @@
       project of its own, with its own parent (Spring Boot) or none (Vert.x), and builds alone from its folder.
       docker-compose/ is not a Maven module.
     -->
-    <groupId>io.orgkeep.demo</groupId>
+    <groupId>org.orgkeep.demo</groupId>
     <artifactId>orgkeep-examples</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>

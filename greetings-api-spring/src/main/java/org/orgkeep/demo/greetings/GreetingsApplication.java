@@ -1,4 +1,4 @@
-package io.orgkeep.demo.greetings;
+package org.orgkeep.demo.greetings;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

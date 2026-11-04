@@ -1,4 +1,4 @@
-package io.orgkeep.demo.greetings;
+package org.orgkeep.demo.greetings;
 
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;

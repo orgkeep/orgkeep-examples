@@ -1,4 +1,4 @@
-package io.orgkeep.demo.greetings;
+package org.orgkeep.demo.greetings;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
