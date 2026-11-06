@@ -70,3 +70,12 @@ docker build -t ghcr.io/orgkeep/greetings-api-spring greetings-api-spring
 ```
 
 The demo stack builds them itself (`docker compose up --build`).
+
+## Contributing
+
+Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Commits are signed off (DCO), no contributor
+license agreement.
+
+## License
+
+[Apache License 2.0](LICENSE).
