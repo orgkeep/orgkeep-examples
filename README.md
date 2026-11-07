@@ -3,6 +3,9 @@
 Everything to try Orgkeep: a demo stack to run it, and APIs of a realm owner protected by Orgkeep, what an
 integrator writes.
 
+> Orgkeep is an **early preview (0.x)**: ready to be tried, not yet to run in production. Known limitations in the
+> [README of the core](https://github.com/orgkeep/orgkeep-core#readme); feedback welcome in the issues.
+
 ## Demo stack
 
 [`docker-compose`](docker-compose): Keycloak, PostgreSQL, Orgkeep (API and dashboard), Mailpit, and the demo APIs
