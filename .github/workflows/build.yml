@@ -1,0 +1,36 @@
+# Builds every push to main and every pull request: the Java example APIs (the aggregator pom), and checks that the
+# demo compose file is valid. The Go gateway is not built here.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A new push to a pull request cancels the build still running for the previous one
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build the example APIs
+        run: mvn -B package
+
+      # Parses the file and resolves its variables, without pulling or starting anything
+      - name: Check the demo compose file
+        run: docker compose config --quiet
+        working-directory: docker-compose
