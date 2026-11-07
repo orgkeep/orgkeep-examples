@@ -8,8 +8,9 @@ days.
 - **Small changes** (a typo, the docs, an obvious bug): open a pull request directly.
 - **Larger changes** (a new example API, a new service in the demo stack): open an issue first, to agree on the
   approach before you spend time on it.
-- **Security vulnerabilities**: never in a public issue. Use *Report a vulnerability* in the *Security* tab of the
-  repository, which keeps the report private.
+- **Security vulnerabilities**: never in a public issue. Use *Report a vulnerability* in the *Security* tab of
+  [orgkeep-core](https://github.com/orgkeep/orgkeep-core/security/advisories/new), which keeps the report private
+  (see its [SECURITY.md](https://github.com/orgkeep/orgkeep-core/blob/main/SECURITY.md)).
 
 ## Sign off your commits (DCO)
 
