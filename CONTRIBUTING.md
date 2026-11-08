@@ -38,7 +38,9 @@ license).
 
 ## Pull requests
 
-- One change per pull request, on a branch created from `main`. Pull requests are squash merged.
+- One change per pull request, on a branch created from `main`; bring `main` in with a rebase, not a merge. A pull
+  request is squashed into one commit, unless its commits are clean and each makes sense on its own: they are then
+  merged as they are.
 - The example builds and its tests pass (`mvn package` in its folder, `go test ./...` for the gateway), and the demo
   stack still starts (`docker compose up -d --build` in `docker-compose`).
 - Follow the style of the surrounding code. Comments are in English.
