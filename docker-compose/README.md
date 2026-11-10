@@ -136,7 +136,7 @@ cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:$(mvn -q
 Then start the compose with that version, for example:
 
 ```
-ORGKEEP_VERSION=0.1.1-SNAPSHOT docker compose up -d --build
+ORGKEEP_VERSION=0.2.0-SNAPSHOT docker compose up -d --build
 ```
 
 (`mvn package -Pdocker` in `orgkeep-core` builds the image of the API alone, `ghcr.io/orgkeep/orgkeep-core`.)
