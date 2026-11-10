@@ -30,7 +30,7 @@ Images:
   pulled from the GitHub Container Registry;
 - the three demo APIs are built from the folders next to this one (`build:` in the compose file).
 
-The Orgkeep version is `ORGKEEP_VERSION` (defaults to the one of this repository):
+The Orgkeep version is `ORGKEEP_VERSION`, by default the latest release (`0.1.0`):
 
 ```
 ORGKEEP_VERSION=0.1.0 docker compose up -d --build
@@ -124,13 +124,19 @@ is kept between restarts.
 
 ## Build the images yourself
 
-To run unreleased changes, build the Orgkeep images from the other repositories, cloned next to this one; they get the
-same names as the published ones, and the compose then uses them:
+To run unreleased changes, build the Orgkeep images from the other repositories, cloned next to this one. They get the
+same names as the published ones, tagged with the version of their `pom.xml`:
 
 ```
 cd orgkeep-core && mvn install            # the dashboard depends on the core
 cd ../orgkeep-dashboard && mvn package -Pdocker
-cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:0.1.0-SNAPSHOT .
+cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout) .
+```
+
+Then start the compose with that version, for example:
+
+```
+ORGKEEP_VERSION=0.1.1-SNAPSHOT docker compose up -d --build
 ```
 
 (`mvn package -Pdocker` in `orgkeep-core` builds the image of the API alone, `ghcr.io/orgkeep/orgkeep-core`.)
