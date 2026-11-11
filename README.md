@@ -4,7 +4,7 @@ Everything to try Orgkeep: a demo stack to run it, and APIs of a realm owner pro
 integrator writes.
 
 > Orgkeep is an **early preview (0.x)**: ready to be tried, not yet to run in production. Known limitations in the
-> [README of the core](https://github.com/orgkeep/orgkeep-core#readme); feedback welcome in the issues.
+> [README of Orgkeep](https://github.com/orgkeep/orgkeep#readme); feedback welcome in the issues.
 
 ## Demo stack
 
@@ -41,7 +41,7 @@ mvn package
 ```
 
 Outside the demo stack, they run against a Keycloak on 8280 with the realm `demo`: the demo stack, or
-`mvn quarkus:dev` in `orgkeep-dashboard`.
+`mvn quarkus:dev` in `orgkeep-dashboard`, a module of [orgkeep](https://github.com/orgkeep/orgkeep).
 
 ## Demo API gateway
 

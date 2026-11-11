@@ -91,7 +91,7 @@ More about each one in its README: [`greetings-api-spring`](../greetings-api-spr
 - Swagger UI: http://localhost:8284/q/swagger-ui, **Authorize** with a username and a password (`realm-owner` /
   `password`).
 - OpenAPI contract: http://localhost:8284/q/openapi
-- The requests of `orgkeep-core/src/test/http/demo.http` target the core alone in dev (port 8282): replace the port
+- The requests of `orgkeep-core/src/test/http/demo.http` (in [orgkeep](https://github.com/orgkeep/orgkeep)) target the core alone in dev (port 8282): replace the port
   with 8284.
 
 ## How it is wired
@@ -110,8 +110,8 @@ More about each one in its README: [`greetings-api-spring`](../greetings-api-spr
   http://localhost:8025.
 
 Every variable of the `orgkeep` service is described in the README of
-[orgkeep-core](https://github.com/orgkeep/orgkeep-core) (configuration of the API) and
-[orgkeep-dashboard](https://github.com/orgkeep/orgkeep-dashboard) (the dashboard client).
+[orgkeep-core](https://github.com/orgkeep/orgkeep/tree/main/orgkeep-core) (configuration of the API) and
+[orgkeep-dashboard](https://github.com/orgkeep/orgkeep/tree/main/orgkeep-dashboard) (the dashboard client).
 
 ## Start over
 
@@ -124,13 +124,12 @@ is kept between restarts.
 
 ## Build the images yourself
 
-To run unreleased changes, build the Orgkeep images from the other repositories, cloned next to this one. They get the
-same names as the published ones, tagged with the version of their `pom.xml`:
+To run unreleased changes, build the Orgkeep images from a clone of [orgkeep](https://github.com/orgkeep/orgkeep).
+They get the same names as the published ones, tagged with the version of its `pom.xml`:
 
 ```
-cd orgkeep-core && mvn install            # the dashboard depends on the core
-cd ../orgkeep-dashboard && mvn package -Pdocker
-cd ../orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout) .
+cd orgkeep && mvn package -Pdocker -DskipTests      # the images of the core and of the dashboard
+cd orgkeep-theme && docker build -t ghcr.io/orgkeep/orgkeep-keycloak:$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout) .
 ```
 
 Then start the compose with that version, for example:
@@ -139,7 +138,8 @@ Then start the compose with that version, for example:
 ORGKEEP_VERSION=0.2.0-SNAPSHOT docker compose up -d --build
 ```
 
-(`mvn package -Pdocker` in `orgkeep-core` builds the image of the API alone, `ghcr.io/orgkeep/orgkeep-core`.)
+(The compose runs `ghcr.io/orgkeep/orgkeep`, the core and the dashboard; `ghcr.io/orgkeep/orgkeep-core` is the image
+of the API alone.)
 
 ## Going further
 
@@ -148,6 +148,6 @@ What this demo leaves out, and a real deployment needs:
   the public HTTPS URL;
 - **secrets** out of the compose file: Keycloak admin, database, dashboard client secret;
 - **no demo data** (`ORGKEEP_DEMO_ENABLED` unset): create the `orgkeep-dashboard` client in Keycloak yourself (see
-  the README of orgkeep-dashboard), and set `ORGKEEP_OWNER_TEMPORARY_PASSWORD` to `true` (the default) so that the
+  the [README of orgkeep-dashboard](https://github.com/orgkeep/orgkeep/tree/main/orgkeep-dashboard)), and set `ORGKEEP_OWNER_TEMPORARY_PASSWORD` to `true` (the default) so that the
   realm owner chooses a password at the first login;
 - a real SMTP server (`ORGKEEP_SMTP_*`).
