@@ -106,6 +106,11 @@ More about each one in its README: [`greetings-api-spring`](../greetings-api-spr
 - **Demo data** comes from `ORGKEEP_DEMO_ENABLED=true`: Orgkeep creates the organisation `acme`, its members, the
   catalogs `prod` and `sandbox` with their products and teams, and the `orgkeep-dashboard` client. Only when
   missing: a restart keeps everything, including what was changed in the dashboard.
+- **How Orgkeep calls Keycloak.** At runtime, as the service account of the client `orgkeep-admin` of the realm
+  `demo` (`ORGKEEP_KEYCLOAK_CLIENT_SECRET`), which can only administer that realm. The admin of `master`
+  (`KEYCLOAK_ADMIN_USER` / `KEYCLOAK_ADMIN_PASSWORD`) only serves the first startup, to create the realm and that
+  client. On every restart Orgkeep logs a warning that these two variables are not used: expected in the demo; outside
+  a demo, remove them after the first startup.
 - **Emails** go from Keycloak to Mailpit (`ORGKEEP_SMTP_*`): invite a member in the dashboard, then open
   http://localhost:8025.
 

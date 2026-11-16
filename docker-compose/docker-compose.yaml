@@ -77,6 +77,11 @@ services:
     environment:
       # Admin API and OIDC go through the internal network
       KEYCLOAK_URL: http://keycloak:8080
+      # Orgkeep calls the admin API as the service account of the client orgkeep-admin of the realm below, which it
+      # creates with this secret at the first startup
+      ORGKEEP_KEYCLOAK_CLIENT_SECRET: orgkeep-admin-demo-secret
+      # An admin of the master realm, only used to create the realm and that client at the first startup. At every
+      # restart Orgkeep logs a warning that they are not used: expected in the demo, remove them outside a demo
       KEYCLOAK_ADMIN_USER: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       # Keycloak as seen by the browser, not by the container: issuer shown to the realm owner, Swagger UI login
