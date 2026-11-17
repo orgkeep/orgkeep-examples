@@ -70,7 +70,7 @@ services:
 
   # The API of the core and the dashboard, a single app (image built by orgkeep-dashboard).
   # API alone, without the dashboard: image ghcr.io/orgkeep/orgkeep-core, port 8282, without
-  # ORGKEEP_DASHBOARD_CLIENT_SECRET (see README.md)
+  # ORGKEEP_DASHBOARD_URL (see README.md)
   orgkeep:
     image: ghcr.io/orgkeep/orgkeep:${ORGKEEP_VERSION:-0.1.0}
     restart: unless-stopped
@@ -98,8 +98,9 @@ services:
       # Creates the demo orgs, their members and catalogs (catalog secrets prod-demo-secret and sandbox-demo-secret)
       ORGKEEP_DEMO_ENABLED: "true"
 
-      # The orgkeep-dashboard client is created by the demo with this secret (redirect http://localhost:8284/*)
-      ORGKEEP_DASHBOARD_CLIENT_SECRET: dashboard-dev-secret
+      # The public URL of the dashboard: Orgkeep creates the orgkeep-dashboard client from it (redirect
+      # http://localhost:8284/*) and repairs it at each startup. Keycloak generates its secret, nobody configures it
+      ORGKEEP_DASHBOARD_URL: http://localhost:8284
       # Login page of the dashboard in the Orgkeep look (theme of the keycloak image above)
       ORGKEEP_DASHBOARD_LOGIN_THEME: orgkeep
 

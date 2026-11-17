@@ -104,8 +104,10 @@ More about each one in its README: [`greetings-api-spring`](../greetings-api-spr
 - **Startup order.** `postgres` → `keycloak` (healthy on its `/health/ready`) → `orgkeep` (healthy once it has
   created the realm `demo`) → the demo APIs, which read the keys of the realm at startup.
 - **Demo data** comes from `ORGKEEP_DEMO_ENABLED=true`: Orgkeep creates the organisation `acme`, its members, the
-  catalogs `prod` and `sandbox` with their products and teams, and the `orgkeep-dashboard` client. Only when
-  missing: a restart keeps everything, including what was changed in the dashboard.
+  catalogs `prod` and `sandbox` with their products and teams. Only when missing: a restart keeps everything,
+  including what was changed in the dashboard.
+- **The dashboard client.** Not demo data: with `ORGKEEP_DASHBOARD_URL` set, Orgkeep creates the Keycloak client
+  `orgkeep-dashboard` at startup (Keycloak generates its secret) and repairs it at each startup, in any installation.
 - **How Orgkeep calls Keycloak.** At runtime, as the service account of the client `orgkeep-admin` of the realm
   `demo` (`ORGKEEP_KEYCLOAK_CLIENT_SECRET`), which can only administer that realm. The admin of `master`
   (`KEYCLOAK_ADMIN_USER` / `KEYCLOAK_ADMIN_PASSWORD`) only serves the first startup, to create the realm and that
@@ -151,8 +153,10 @@ of the API alone.)
 What this demo leaves out, and a real deployment needs:
 - **TLS** in front of Keycloak and Orgkeep (a reverse proxy), and `KC_HOSTNAME` / `ORGKEEP_KEYCLOAK_PUBLIC_URL` set to
   the public HTTPS URL;
-- **secrets** out of the compose file: Keycloak admin, database, dashboard client secret;
-- **no demo data** (`ORGKEEP_DEMO_ENABLED` unset): create the `orgkeep-dashboard` client in Keycloak yourself (see
-  the [README of orgkeep-dashboard](https://github.com/orgkeep/orgkeep/tree/main/orgkeep-dashboard)), and set `ORGKEEP_OWNER_TEMPORARY_PASSWORD` to `true` (the default) so that the
-  realm owner chooses a password at the first login;
+- **secrets** out of the compose file: Keycloak admin, database;
+- **no demo data** (`ORGKEEP_DEMO_ENABLED` unset): set `ORGKEEP_DASHBOARD_URL` to the public URL of the dashboard (the
+  client is created by Orgkeep, see the
+  [configuration reference](https://orgkeep.org/docs/latest/reference/configuration/)), and set
+  `ORGKEEP_OWNER_TEMPORARY_PASSWORD` to `true` (the default) so that the realm owner chooses a password at the first
+  login;
 - a real SMTP server (`ORGKEEP_SMTP_*`).
